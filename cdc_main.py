@@ -1,7 +1,10 @@
+import sys
 import cdc_ecg_generator as cdc_ecg
 import paho.mqtt.client as mqtt
+import requests
 import threading
 import time
+import datetime
 
 
 # Global shared variables
@@ -133,18 +136,27 @@ def cdc_mqtt_task(task_lock, ecg_lock):
     global ecg_permit_to_send
     
     # Local variable
-    CLIENT_NAME     = "CMdummy01"
-    BROKER_ADDRESS  = "192.168.1.100"
+    CLIENT_NAME     = str(sys.argv[1])
+    PATIENT_NAME    = str(sys.argv[2])
+    BROKER_ADDRESS  = "192.168.1.78"
     BROKER_PORT     = 1883
-    ECG_TOPIC       = f"/{CLIENT_NAME}/ecg/pub"
-    IMU_TOPIC       = f"/{CLIENT_NAME}/imu/pub"
+    TIME_TOPIC      = f"/time/{CLIENT_NAME}/{PATIENT_NAME}"
+    ECG_TOPIC       = f"/ecg/{CLIENT_NAME}/{PATIENT_NAME}"
+    IMU_TOPIC       = f"/imu/{CLIENT_NAME}/{PATIENT_NAME}"
     ecg_permit      = 0
     imu_permit      = 0
     ecg_cmml        = ""
 
+    # Request to register
+    response = requests.post(f"https://3b27-2001-448a-404a-15ff-dbf6-f6b2-e82f-eb18.ngrok-free.app/api/v1/device/{CLIENT_NAME}")
+    response = requests.post(f"https://3b27-2001-448a-404a-15ff-dbf6-f6b2-e82f-eb18.ngrok-free.app/api/v1/device/{CLIENT_NAME}/{PATIENT_NAME}")
+
     # Start MQTT
     client = mqtt.Client(CLIENT_NAME)
     client.connect(BROKER_ADDRESS, BROKER_PORT)
+
+    # Send initiate
+    client.publish(TIME_TOPIC, str(time.mktime(datetime.datetime.now().timetuple())))
 
     # Loop
     task_run = True
