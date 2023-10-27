@@ -56,12 +56,11 @@ class CardimetryECGWaveCharacteristics:
         # RSA factor
         self.rsa_enable     = False
         self.rsa_freq       = 0.25
-        self.rsa_amp        = 0.0
 
         # Mayer factor
-        self.mayer_enable   = False
-        self.mayer_freq     = 0.1
-        self.mayer_amp      = 0.0
+        self.mayer_enable       = False
+        self.mayer_freq         = 0.1
+        self.mayer_freq_mov     = 0.01
 
 
     def setBaseFrequency(self, bpm:float) -> None:
@@ -102,7 +101,7 @@ class CardimetryECGWaveCharacteristics:
         self.t_wave_b       = b
 
 
-    def enableRespiratoryFactor(self, rate:float, amp:float):
+    def enableRespiratoryFactor(self, amp:float, rate:float=0.23):
         self.respiratory_enable = True
         self.respiratory_rate   = rate
         self.respiratory_amp    = amp
@@ -112,20 +111,18 @@ class CardimetryECGWaveCharacteristics:
         self.respiratory_enable = False
 
 
-    def enableRSAFactor(self, freq:float, amp:float):
+    def enableRSAFactor(self, freq_displacement:float=0.25):
         self.rsa_enable = True
-        self.rsa_freq   = freq
-        self.rsa_amp    = amp
+        self.rsa_freq   = freq_displacement
 
 
     def disableRSAFactor(self):
         self.rsa_enable = False
 
     
-    def enableMayerFactor(self, freq:float, amp:float):
+    def enableMayerFactor(self, freq_displacement:float=0.1, freq_movement:float=0.01):
         self.mayer_enable   = True
-        self.mayer_freq     = freq
-        self.mayer_amp      = amp
+        self.mayer_freq     = freq_displacement
 
 
     def disableMayerFactor(self):
@@ -178,7 +175,9 @@ class CardimetryECGGenerator:
 
     def calcOmega(self, time:float) -> float:
         if self.ecg_wave_characteristics.rsa_enable or self.ecg_wave_characteristics.mayer_enable:
-            return self.ecg_wave_characteristics.base_freq
+            rsa_fact    = float(self.ecg_wave_characteristics.rsa_enable)*self.ecg_wave_characteristics.rsa_freq*np.sin(2.0*np.pi*self.ecg_wave_characteristics.respiratory_rate*time)
+            mayer_fact  = float(self.ecg_wave_characteristics.mayer_enable)*self.ecg_wave_characteristics.mayer_freq*np.sin(2.0*np.pi*self.ecg_wave_characteristics.mayer_freq_mov*time)
+            return self.ecg_wave_characteristics.base_freq + rsa_fact + mayer_fact
         else:
             return self.ecg_wave_characteristics.base_freq
         
@@ -206,15 +205,16 @@ class CardimetryECGGenerator:
 
     def calcNextState(self) -> None:
         self.state      = self.state + self.calcSSEquation(self.state, self.timestamp)*self.TIME_STEP
+        # self.state      = self.state + np.array([[0.0], [0.0], [np.random.normal(0.001)]])
         self.timestamp  += self.TIME_STEP
     
 
     def getCurrentAmp(self) -> float:
-        return self.state[2].item()
+        return self.state[2].item() + np.random.normal(loc=0, scale=0.012)
     
 
     def getCurrentAmpADS1293Format(self) -> int:
-        return int(self.state[2].item()*15435038.72)
+        return int((self.state[2].item() + np.random.normal(loc=0, scale=0.012))*15435038.72)
     
 
     def getCurrentTimeStamp(self) -> float:
