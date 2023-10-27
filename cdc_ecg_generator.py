@@ -213,5 +213,13 @@ class CardimetryECGGenerator:
         return self.state[2].item()
     
 
+    def getCurrentAmpADS1293Format(self) -> int:
+        return int(self.state[2].item()*15435038.72)
+    
+
     def getCurrentTimeStamp(self) -> float:
         return self.timestamp
+    
+
+    def getCurrentTimeStampMillis(self) -> int:
+        return int(self.timestamp*1000)

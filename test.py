@@ -38,7 +38,7 @@ wave_chr = [
 
 def ecgSSEq(x:np.ndarray, time:float) -> np.ndarray:
     alpha = 1.0 - np.sqrt(x[0].item()**2.0 + x[1].item()**2.0)
-    omega = 0.105
+    omega = 8.5
 
     z_dot = 0
     for i in range(len(wave_chr)):
