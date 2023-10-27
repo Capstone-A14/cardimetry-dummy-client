@@ -1,84 +1,39 @@
+import cdc_ecg_generator as cdc_ecg
 import numpy as np
 import matplotlib.pyplot as plt
 
 
-
-A_FACT = 30
-B_FACT = 1
-
-wave_chr = [
-    {
-        'theta': -np.pi/3.0,
-        'a': 0.3*A_FACT,
-        'b': 0.25*B_FACT
-    },
-    {
-        'theta': -np.pi/12.0,
-        'a': -5.0*A_FACT,
-        'b': 0.1*B_FACT
-    },
-    {
-        'theta': 0,
-        'a': 30.0*A_FACT,
-        'b': 0.1*B_FACT
-    },
-    {
-        'theta': np.pi/12,
-        'a': -7.5*A_FACT,
-        'b': 0.1*B_FACT
-    },
-    {
-        'theta': np.pi/1.7,
-        'a': 0.3*A_FACT,
-        'b': 0.4*B_FACT
-    }
-]
+# Parameters
+SIMULATION_TIME = 3000  # in ms
+SAMPLING_DIV    = 10    # the value represents period of sampling in ms
 
 
-
-def ecgSSEq(x:np.ndarray, time:float) -> np.ndarray:
-    alpha = 1.0 - np.sqrt(x[0].item()**2.0 + x[1].item()**2.0)
-    omega = 8.5
-
-    z_dot = 0
-    for i in range(len(wave_chr)):
-        a           = wave_chr[i]['a']
-        b           = wave_chr[i]['b']
-        theta       = np.arctan2(x[1].item(), x[0].item())
-        theta_diff  = np.fmod(theta - wave_chr[i]['theta'], 2.0*np.pi)
-        exp_term    = np.exp(-((theta_diff)**2.0)/(2.0*(b**2.0)))
-        z_dot       -= a*theta_diff*exp_term
-
-    z_dot -= x[2].item() - 0.15 + 0.01*np.sin(2*np.pi*0.24*time)
-
-    return np.array([
-        [alpha*x[0].item() - omega*x[1].item()],
-        [alpha*x[1].item() + omega*x[0].item()],
-        [z_dot]
-    ])
+# ECG generator
+ecg_wave = cdc_ecg.CardimetryECGWaveCharacteristics()
+# ecg_wave.setBaseFrequency(120)
+# ecg_wave.enableRespiratoryFactor(0.01, 0.4)
+# ecg_wave.enableRSAFactor(5)
+# ecg_wave.enableMayerFactor()
+ecg_generator = cdc_ecg.CardimetryECGGenerator(ecg_wave)
 
 
+# Simulation Loop
+time_stamp      = [ecg_generator.getCurrentTimeStamp()]
+ecg_amplitude   = [ecg_generator.getCurrentAmp()]
+sampling_cnt    = 0
 
-state = np.array([
-    [-1.0],
-    [0.0],
-    [0.15]
-])
-time        = 0.0
-state_his   = [state[2].item()] 
-time_stamp  = [0.0]
+for t in range(SIMULATION_TIME):
 
+    # Step update
+    ecg_generator.calcNextState()
 
-
-for i in range(60000):
-    time += 0.001
-    state = state + ecgSSEq(state, time)*0.001
-    state_his.append(state[2].item())
-    time_stamp.append(time)
+    # Sampling count
+    sampling_cnt = (sampling_cnt + 1) % SAMPLING_DIV
+    if sampling_cnt == 0:
+        time_stamp.append(ecg_generator.getCurrentTimeStamp())
+        ecg_amplitude.append(ecg_generator.getCurrentAmp())
 
 
-
-
-plt.plot(time_stamp, state_his)
-plt.grid()
+# Plot
+plt.plot(time_stamp, ecg_amplitude)
 plt.show()
