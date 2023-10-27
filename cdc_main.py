@@ -254,15 +254,15 @@ def cdc_mqtt_task(task_lock, ecg_lock, imu_lock):
     imu_cmml        = ""
 
     # Request to register
-    # response = requests.post(f"https://3b27-2001-448a-404a-15ff-dbf6-f6b2-e82f-eb18.ngrok-free.app/api/v1/device/{CLIENT_NAME}")
-    # response = requests.post(f"https://3b27-2001-448a-404a-15ff-dbf6-f6b2-e82f-eb18.ngrok-free.app/api/v1/device/{CLIENT_NAME}/{PATIENT_NAME}")
+    response = requests.post(f"https://3b27-2001-448a-404a-15ff-dbf6-f6b2-e82f-eb18.ngrok-free.app/api/v1/device/{CLIENT_NAME}")
+    response = requests.post(f"https://3b27-2001-448a-404a-15ff-dbf6-f6b2-e82f-eb18.ngrok-free.app/api/v1/device/{CLIENT_NAME}/{PATIENT_NAME}")
 
     # Start MQTT
-    # client = mqtt.Client(CLIENT_NAME)
-    # client.connect(BROKER_ADDRESS, BROKER_PORT)
+    client = mqtt.Client(CLIENT_NAME)
+    client.connect(BROKER_ADDRESS, BROKER_PORT)
 
     # Send initiate
-    # client.publish(TIME_TOPIC, str(time.mktime(datetime.datetime.now().timetuple())))
+    client.publish(TIME_TOPIC, str(time.mktime(datetime.datetime.now().timetuple())))
 
     # Loop
     task_run = True
@@ -284,9 +284,9 @@ def cdc_mqtt_task(task_lock, ecg_lock, imu_lock):
             ecg_lead1_q1    = ""
             ecg_lead2_q1    = ""
             ecg_lead3_q1    = ""
-            print('-------------[ ECG QUEUE 1 ]-------------')
-            print(ecg_cmml)
-            # client.publish(ECG_TOPIC, ecg_cmml)
+            # print('-------------[ ECG QUEUE 1 ]-------------')
+            # print(ecg_cmml)
+            client.publish(ECG_TOPIC, ecg_cmml)
 
             # Reset
             ecg_permit = 0
@@ -302,9 +302,9 @@ def cdc_mqtt_task(task_lock, ecg_lock, imu_lock):
             ecg_lead1_q2    = ""
             ecg_lead2_q2    = ""
             ecg_lead3_q2    = ""
-            print('-------------[ ECG QUEUE 2 ]-------------')
-            print(ecg_cmml)
-            # client.publish(ECG_TOPIC, ecg_cmml)
+            # print('-------------[ ECG QUEUE 2 ]-------------')
+            # print(ecg_cmml)
+            client.publish(ECG_TOPIC, ecg_cmml)
 
             # Reset
             ecg_permit = 0
@@ -321,9 +321,9 @@ def cdc_mqtt_task(task_lock, ecg_lock, imu_lock):
             imu_qx_q1   = ""
             imu_qy_q1   = ""
             imu_qz_q1   = ""
-            print('-------------[ IMU QUEUE 1 ]-------------')
-            print(imu_cmml)
-            # client.publish(IMU_TOPIC, imu_cmml)
+            # print('-------------[ IMU QUEUE 1 ]-------------')
+            # print(imu_cmml)
+            client.publish(IMU_TOPIC, imu_cmml)
 
             # Reset
             imu_permit = 0
@@ -340,9 +340,9 @@ def cdc_mqtt_task(task_lock, ecg_lock, imu_lock):
             imu_qx_q2   = ""
             imu_qy_q2   = ""
             imu_qz_q2   = ""
-            print('-------------[ IMU QUEUE 2 ]-------------')
-            print(imu_cmml)
-            # client.publish(IMU_TOPIC, imu_cmml)
+            # print('-------------[ IMU QUEUE 2 ]-------------')
+            # print(imu_cmml)
+            client.publish(IMU_TOPIC, imu_cmml)
 
             # Reset
             imu_permit = 0
@@ -360,7 +360,7 @@ def cdc_mqtt_task(task_lock, ecg_lock, imu_lock):
 
     
     # Notify if the task ended
-    # client.disconnect()
+    client.disconnect()
     print("MQTT task terminated")
 
 
