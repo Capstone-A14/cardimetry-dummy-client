@@ -90,13 +90,13 @@ def cdc_ecg_task(task_lock, ecg_lock):
         if sampling_cnt == 0:
 
             if queue_select == 1:
-                ecg_ts_q1    += str(cm_ecg_generator_lead1.getCurrentTimeStampMillis()) + ','
+                ecg_ts_q1    += str(time.time_ns()/1000) + ','
                 ecg_lead1_q1 += str(cm_ecg_generator_lead1.getCurrentAmpADS1293Format()) + ','
                 ecg_lead2_q1 += str(cm_ecg_generator_lead2.getCurrentAmpADS1293Format()) + ','
                 ecg_lead3_q1 += str(cm_ecg_generator_lead3.getCurrentAmpADS1293Format()) + ','
 
             elif queue_select == 2:
-                ecg_ts_q2    += str(cm_ecg_generator_lead1.getCurrentTimeStampMillis()) + ','
+                ecg_ts_q2    += str(time.time_ns()/1000) + ','
                 ecg_lead1_q2 += str(cm_ecg_generator_lead1.getCurrentAmpADS1293Format()) + ','
                 ecg_lead2_q2 += str(cm_ecg_generator_lead2.getCurrentAmpADS1293Format()) + ','
                 ecg_lead3_q2 += str(cm_ecg_generator_lead3.getCurrentAmpADS1293Format()) + ','
@@ -168,14 +168,14 @@ def cdc_imu_task(task_lock, imu_lock):
 
         # Store data to queue
         if queue_select == 1:
-            imu_ts_q1   += str(cm_imu_generator.getTimeStampMillis()) + ','
+            imu_ts_q1   += str(time.time_ns()/1000) + ','
             imu_qw_q1   += str(cm_imu_generator.getOrientationQw()) + ','
             imu_qx_q1   += str(cm_imu_generator.getOrientationQx()) + ','
             imu_qy_q1   += str(cm_imu_generator.getOrientationQy()) + ','
             imu_qz_q1   += str(cm_imu_generator.getOrientationQz()) + ','
 
         elif queue_select == 2:
-            imu_ts_q2   += str(cm_imu_generator.getTimeStampMillis()) + ','
+            imu_ts_q2   += str(time.time_ns()/1000) + ','
             imu_qw_q2   += str(cm_imu_generator.getOrientationQw()) + ','
             imu_qx_q2   += str(cm_imu_generator.getOrientationQx()) + ','
             imu_qy_q2   += str(cm_imu_generator.getOrientationQy()) + ','
@@ -243,7 +243,7 @@ def cdc_mqtt_task(task_lock, ecg_lock, imu_lock):
     # Local variable
     CLIENT_NAME     = str(sys.argv[1])
     PATIENT_NAME    = str(sys.argv[2])
-    BROKER_ADDRESS  = "192.168.1.78"
+    BROKER_ADDRESS  = "192.168.172.102"
     BROKER_PORT     = 1883
     TIME_TOPIC      = f"/time/{CLIENT_NAME}/{PATIENT_NAME}"
     ECG_TOPIC       = f"/ecg/{CLIENT_NAME}/{PATIENT_NAME}"
@@ -254,8 +254,8 @@ def cdc_mqtt_task(task_lock, ecg_lock, imu_lock):
     imu_cmml        = ""
 
     # Request to register
-    response = requests.post(f"https://3b27-2001-448a-404a-15ff-dbf6-f6b2-e82f-eb18.ngrok-free.app/api/v1/device/{CLIENT_NAME}")
-    response = requests.post(f"https://3b27-2001-448a-404a-15ff-dbf6-f6b2-e82f-eb18.ngrok-free.app/api/v1/device/{CLIENT_NAME}/{PATIENT_NAME}")
+    response = requests.post(f"https://4fa6-2404-c0-9aa0-00-3df4-d180.ngrok-free.app/api/v1/device/{CLIENT_NAME}")
+    response = requests.post(f"https://4fa6-2404-c0-9aa0-00-3df4-d180.ngrok-free.app/api/v1/device/{CLIENT_NAME}/{PATIENT_NAME}")
 
     # Start MQTT
     client = mqtt.Client(CLIENT_NAME)
