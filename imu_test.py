@@ -12,7 +12,7 @@ qy_his      = [imu_generator.getOrientationQy()]
 qz_his      = [imu_generator.getOrientationQz()]
 
 # Loop
-for i in range(480000):
+for i in range(10000):
 
     # Next step
     imu_generator.stepOrientation()
@@ -25,9 +25,19 @@ for i in range(480000):
     qz_his.append(imu_generator.getOrientationQz())
 
 # Plot
-plt.plot(time_stamp, qw_his)
-plt.plot(time_stamp, qx_his)
-plt.plot(time_stamp, qy_his)
-plt.plot(time_stamp, qz_his)
-plt.grid()
+fig, ax = plt.subplots(4, 1)
+fig.suptitle('Quaternion Orientation')
+ax[0].plot(time_stamp, qw_his, c='r')
+ax[0].set_ylabel('$q_w$')
+ax[1].plot(time_stamp, qx_his, c='c')
+ax[1].set_ylabel('$q_x$')
+ax[2].plot(time_stamp, qy_his, c='b')
+ax[2].set_ylabel('$q_y$')
+ax[3].plot(time_stamp, qz_his, c='g')
+ax[3].set_ylabel('$q_z$')
+ax[3].set_xlabel('$t$')
+ax[0].grid()
+ax[1].grid()
+ax[2].grid()
+ax[3].grid()
 plt.show()
