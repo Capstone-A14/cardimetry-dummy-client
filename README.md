@@ -3,5 +3,6 @@ Dummy testing client for Cardimetry system with artificial ECG wave generator an
 
 Run the dummies with the following arguments:
 ```
-python cdc_main.py {DEVICE_NAME} {PATIENT_NAME}
+python cdc_main.py {DEVICE_NAME} {PATIENT_NAME} {CONDITION}
+// {CONDITION} can be filled with "a" for abnormality and "n" for normal
 ```
