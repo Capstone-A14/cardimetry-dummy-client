@@ -6,6 +6,7 @@ import requests
 import threading
 import time
 import datetime
+import numpy as np
 
 
 # Global shared variables
@@ -66,14 +67,33 @@ def cdc_ecg_task(task_lock, ecg_lock):
     queue_cnt               = 0
 
     # Create and modify the ECG wave characteristics
+    random_val = np.random.rand()
+
     cm_ecg_lead1 = cdc_ecg.CardimetryECGWaveCharacteristics()
+    if str(sys.argv[3]) == 'a':
+        cm_ecg_lead1.setBaseAmplitude(0.4)
+        cm_ecg_lead1.setBaseFrequency(70 + random_val*50)
+        cm_ecg_lead1.enableRespiratoryFactor(0.005 + random_val*0.01, 0.24)
+        cm_ecg_lead1.enableRSAFactor(0.1)
+        cm_ecg_lead1.enableMayerFactor()
+    else:
+        cm_ecg_lead1.setBaseAmplitude(0.3)
+        cm_ecg_lead2.setBaseFrequency(70 + random_val*30)
+
     cm_ecg_lead2 = cdc_ecg.CardimetryECGWaveCharacteristics()
-    cm_ecg_lead3 = cdc_ecg.CardimetryECGWaveCharacteristics()
+    if str(sys.argv[3]) == 'a':
+        cm_ecg_lead2.setBaseAmplitude(0.2)
+        cm_ecg_lead2.setBaseFrequency(70 + random_val*50)
+        cm_ecg_lead2.enableRespiratoryFactor(0.005 + random_val*0.01, 0.24)
+        cm_ecg_lead2.enableRSAFactor(0.1)
+        cm_ecg_lead2.enableMayerFactor()
+    else:
+        cm_ecg_lead2.setBaseAmplitude(0.15)
+        cm_ecg_lead2.setBaseFrequency(70 + random_val*30)
 
     # Create an ECG generator
     cm_ecg_generator_lead1 = cdc_ecg.CardimetryECGGenerator(cm_ecg_lead1)
     cm_ecg_generator_lead2 = cdc_ecg.CardimetryECGGenerator(cm_ecg_lead2)
-    cm_ecg_generator_lead3 = cdc_ecg.CardimetryECGGenerator(cm_ecg_lead3)
 
     # Loop
     task_run = True
@@ -82,24 +102,28 @@ def cdc_ecg_task(task_lock, ecg_lock):
         # Generator run
         cm_ecg_generator_lead1.calcNextState()
         cm_ecg_generator_lead2.calcNextState()
-        cm_ecg_generator_lead3.calcNextState()
 
 
         # Increment count, checks whether the sampling can be done
         sampling_cnt = (sampling_cnt + 1)%SAMPLING_RELATIVE_COUNT
         if sampling_cnt == 0:
 
+            ts      = time.time_ns()/1000
+            lead1   = cm_ecg_generator_lead1.getCurrentAmpADS1293Format()
+            lead2   = cm_ecg_generator_lead1.getCurrentAmpADS1293Format()
+            lead3   = lead1 - lead2
+
             if queue_select == 1:
-                ecg_ts_q1    += str(time.time_ns()/1000) + ','
-                ecg_lead1_q1 += str(cm_ecg_generator_lead1.getCurrentAmpADS1293Format()) + ','
-                ecg_lead2_q1 += str(cm_ecg_generator_lead2.getCurrentAmpADS1293Format()) + ','
-                ecg_lead3_q1 += str(cm_ecg_generator_lead3.getCurrentAmpADS1293Format()) + ','
+                ecg_ts_q1    += str(ts) + ','
+                ecg_lead1_q1 += str(lead1) + ','
+                ecg_lead2_q1 += str(lead2) + ','
+                ecg_lead3_q1 += str(lead3) + ','
 
             elif queue_select == 2:
-                ecg_ts_q2    += str(time.time_ns()/1000) + ','
-                ecg_lead1_q2 += str(cm_ecg_generator_lead1.getCurrentAmpADS1293Format()) + ','
-                ecg_lead2_q2 += str(cm_ecg_generator_lead2.getCurrentAmpADS1293Format()) + ','
-                ecg_lead3_q2 += str(cm_ecg_generator_lead3.getCurrentAmpADS1293Format()) + ','
+                ecg_ts_q2    += str(ts) + ','
+                ecg_lead1_q2 += str(lead1) + ','
+                ecg_lead2_q2 += str(lead2) + ','
+                ecg_lead3_q2 += str(lead3) + ','
 
             queue_cnt += 1
 
@@ -243,8 +267,8 @@ def cdc_mqtt_task(task_lock, ecg_lock, imu_lock):
     # Local variable
     CLIENT_NAME     = str(sys.argv[1])
     PATIENT_NAME    = str(sys.argv[2])
-    BROKER_ADDRESS  = "192.168.172.102"
-    BROKER_PORT     = 1883
+    SERVER_ADDRESS  = "192.168.172.102"
+    MQTT_PORT       = 1883
     TIME_TOPIC      = f"/time/{CLIENT_NAME}/{PATIENT_NAME}"
     ECG_TOPIC       = f"/ecg/{CLIENT_NAME}/{PATIENT_NAME}"
     IMU_TOPIC       = f"/imu/{CLIENT_NAME}/{PATIENT_NAME}"
@@ -254,12 +278,12 @@ def cdc_mqtt_task(task_lock, ecg_lock, imu_lock):
     imu_cmml        = ""
 
     # Request to register
-    response = requests.post(f"https://4fa6-2404-c0-9aa0-00-3df4-d180.ngrok-free.app/api/v1/device/{CLIENT_NAME}")
-    response = requests.post(f"https://4fa6-2404-c0-9aa0-00-3df4-d180.ngrok-free.app/api/v1/device/{CLIENT_NAME}/{PATIENT_NAME}")
+    response = requests.post(f"https://{SERVER_ADDRESS}/api/v1/device/{CLIENT_NAME}")
+    response = requests.post(f"https://{SERVER_ADDRESS}/api/v1/device/{CLIENT_NAME}/{PATIENT_NAME}")
 
     # Start MQTT
     client = mqtt.Client(CLIENT_NAME)
-    client.connect(BROKER_ADDRESS, BROKER_PORT)
+    client.connect(SERVER_ADDRESS, MQTT_PORT)
 
     # Send initiate
     client.publish(TIME_TOPIC, str(time.mktime(datetime.datetime.now().timetuple())))
