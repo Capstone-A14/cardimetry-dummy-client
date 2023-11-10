@@ -1,19 +1,21 @@
 import cdc_ecg_generator as cdc_ecg
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 # Parameters
-SIMULATION_TIME = 3000  # in ms
-SAMPLING_DIV    = 10    # the value represents period of sampling in ms
+SIMULATION_TIME = 10000     # in ms
+SAMPLING_DIV    = 10        # the value represents period of sampling in ms
 
 
 # ECG generator
-ecg_wave = cdc_ecg.CardimetryECGWaveCharacteristics()
-# ecg_wave.setBaseFrequency(120)
-# ecg_wave.enableRespiratoryFactor(0.01, 0.4)
-# ecg_wave.enableRSAFactor(5)
-# ecg_wave.enableMayerFactor()
+ecg_wave    = cdc_ecg.CardimetryECGWaveCharacteristics()
+random_val  = np.random.rand()
+ecg_wave.setBaseAmplitude(0.2)
+ecg_wave.setBaseFrequency(70 + random_val*50)
+ecg_wave.enableRespiratoryFactor(0.01 + random_val*0.01, 0.24)
+ecg_wave.enableRSAFactor(0.1)
+ecg_wave.enableMayerFactor()
 ecg_generator = cdc_ecg.CardimetryECGGenerator(ecg_wave)
 
 
