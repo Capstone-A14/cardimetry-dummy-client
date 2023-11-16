@@ -71,7 +71,7 @@ def cdc_ecg_task(task_lock, ecg_lock):
 
     cm_ecg_lead1 = cdc_ecg.CardimetryECGWaveCharacteristics()
     if str(sys.argv[3]) == 'a':
-        cm_ecg_lead1.setBaseAmplitude(0.4)
+        cm_ecg_lead1.setBaseAmplitude(0.7)
         cm_ecg_lead1.setBaseFrequency(70 + random_val*50)
         cm_ecg_lead1.enableRespiratoryFactor(0.005 + random_val*0.01, 0.24)
         cm_ecg_lead1.enableRSAFactor(0.1)
@@ -82,14 +82,16 @@ def cdc_ecg_task(task_lock, ecg_lock):
 
     cm_ecg_lead2 = cdc_ecg.CardimetryECGWaveCharacteristics()
     if str(sys.argv[3]) == 'a':
-        cm_ecg_lead2.setBaseAmplitude(0.2)
+        cm_ecg_lead2.setBaseAmplitude(0.4)
         cm_ecg_lead2.setBaseFrequency(70 + random_val*50)
         cm_ecg_lead2.enableRespiratoryFactor(0.005 + random_val*0.01, 0.24)
         cm_ecg_lead2.enableRSAFactor(0.1)
         cm_ecg_lead2.enableMayerFactor()
+        cm_ecg_lead2.setRWaveCharacteristics(500, 0.1)
     else:
-        cm_ecg_lead2.setBaseAmplitude(0.15)
+        cm_ecg_lead2.setBaseAmplitude(0.13)
         cm_ecg_lead2.setBaseFrequency(70 + random_val*30)
+        cm_ecg_lead2.setRWaveCharacteristics(500, 0.1)
 
     # Create an ECG generator
     cm_ecg_generator_lead1 = cdc_ecg.CardimetryECGGenerator(cm_ecg_lead1)
