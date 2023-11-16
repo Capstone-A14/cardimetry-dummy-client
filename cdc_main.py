@@ -78,7 +78,7 @@ def cdc_ecg_task(task_lock, ecg_lock):
         cm_ecg_lead1.enableMayerFactor()
     else:
         cm_ecg_lead1.setBaseAmplitude(0.3)
-        cm_ecg_lead2.setBaseFrequency(70 + random_val*30)
+        cm_ecg_lead1.setBaseFrequency(70 + random_val*30)
 
     cm_ecg_lead2 = cdc_ecg.CardimetryECGWaveCharacteristics()
     if str(sys.argv[3]) == 'a':
@@ -267,7 +267,7 @@ def cdc_mqtt_task(task_lock, ecg_lock, imu_lock):
     # Local variable
     CLIENT_NAME     = str(sys.argv[1])
     PATIENT_NAME    = str(sys.argv[2])
-    SERVER_ADDRESS  = "192.168.172.102"
+    SERVER_ADDRESS  = "192.168.0.214"
     MQTT_PORT       = 1883
     TIME_TOPIC      = f"/time/{CLIENT_NAME}/{PATIENT_NAME}"
     ECG_TOPIC       = f"/ecg/{CLIENT_NAME}/{PATIENT_NAME}"
@@ -278,8 +278,8 @@ def cdc_mqtt_task(task_lock, ecg_lock, imu_lock):
     imu_cmml        = ""
 
     # Request to register
-    response = requests.post(f"https://{SERVER_ADDRESS}/api/v1/device/{CLIENT_NAME}")
-    response = requests.post(f"https://{SERVER_ADDRESS}/api/v1/device/{CLIENT_NAME}/{PATIENT_NAME}")
+    # response = requests.post(f"https://{SERVER_ADDRESS}/api/v1/device/{CLIENT_NAME}")
+    # response = requests.post(f"https://{SERVER_ADDRESS}/api/v1/device/{CLIENT_NAME}/{PATIENT_NAME}")
 
     # Start MQTT
     client = mqtt.Client(CLIENT_NAME)
