@@ -108,7 +108,7 @@ def cdc_ecg_task(task_lock, ecg_lock):
         sampling_cnt = (sampling_cnt + 1)%SAMPLING_RELATIVE_COUNT
         if sampling_cnt == 0:
 
-            ts      = time.time_ns()/1000
+            ts      = time.time()*1000
             lead1   = cm_ecg_generator_lead1.getCurrentAmpADS1293Format()
             lead2   = cm_ecg_generator_lead1.getCurrentAmpADS1293Format()
             lead3   = lead1 - lead2
@@ -192,14 +192,14 @@ def cdc_imu_task(task_lock, imu_lock):
 
         # Store data to queue
         if queue_select == 1:
-            imu_ts_q1   += str(time.time_ns()/1000) + ','
+            imu_ts_q1   += str(time.time()*1000) + ','
             imu_qw_q1   += str(cm_imu_generator.getOrientationQw()) + ','
             imu_qx_q1   += str(cm_imu_generator.getOrientationQx()) + ','
             imu_qy_q1   += str(cm_imu_generator.getOrientationQy()) + ','
             imu_qz_q1   += str(cm_imu_generator.getOrientationQz()) + ','
 
         elif queue_select == 2:
-            imu_ts_q2   += str(time.time_ns()/1000) + ','
+            imu_ts_q2   += str(time.time()*1000) + ','
             imu_qw_q2   += str(cm_imu_generator.getOrientationQw()) + ','
             imu_qx_q2   += str(cm_imu_generator.getOrientationQx()) + ','
             imu_qy_q2   += str(cm_imu_generator.getOrientationQy()) + ','

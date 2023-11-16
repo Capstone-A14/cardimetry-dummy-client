@@ -129,6 +129,14 @@ class CardimetryECGWaveCharacteristics:
         self.mayer_enable   = False
 
 
+    def enableAtrialFib(self):
+        pass
+
+
+    def disableAtrialFib(self):
+        pass
+
+
 
 class CardimetryECGGenerator:
 
