@@ -11,11 +11,12 @@ SAMPLING_DIV    = 10        # the value represents period of sampling in ms
 # ECG generator
 ecg_wave    = cdc_ecg.CardimetryECGWaveCharacteristics()
 random_val  = np.random.rand()
-ecg_wave.setBaseAmplitude(0.2)
+ecg_wave.setBaseAmplitude(0.8)
 ecg_wave.setBaseFrequency(70 + random_val*50)
 ecg_wave.enableRespiratoryFactor(0.01 + random_val*0.01, 0.24)
 ecg_wave.enableRSAFactor(0.1)
 ecg_wave.enableMayerFactor()
+ecg_wave.setRWaveCharacteristics(0.0, 500, 0.1)
 ecg_generator = cdc_ecg.CardimetryECGGenerator(ecg_wave)
 
 

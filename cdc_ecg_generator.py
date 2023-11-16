@@ -72,33 +72,33 @@ class CardimetryECGWaveCharacteristics:
 
 
     def setPWaveCharacteristics(self, theta:float, a:float, b:float) -> None:
-        self.p_wave_theta   = theta
-        self.p_wave_a       = a
-        self.p_wave_b       = b
+        self.wave[self.P]['theta']  = theta
+        self.wave[self.P]['a']      = a
+        self.wave[self.P]['b']      = b
 
 
     def setQWaveCharacteristics(self, theta:float, a:float, b:float) -> None:
-        self.q_wave_theta   = theta
-        self.q_wave_a       = a
-        self.q_wave_b       = b
+        self.wave[self.Q]['theta']  = theta
+        self.wave[self.Q]['a']      = a
+        self.wave[self.Q]['b']      = b
 
 
     def setRWaveCharacteristics(self, theta:float, a:float, b:float) -> None:
-        self.r_wave_theta   = theta
-        self.r_wave_a       = a
-        self.r_wave_b       = b
+        self.wave[self.R]['theta']  = theta
+        self.wave[self.R]['a']      = a
+        self.wave[self.R]['b']      = b
 
 
     def setSWaveCharacteristics(self, theta:float, a:float, b:float) -> None:
-        self.s_wave_theta   = theta
-        self.s_wave_a       = a
-        self.s_wave_b       = b
+        self.wave[self.S]['theta']  = theta
+        self.wave[self.S]['a']      = a
+        self.wave[self.S]['b']      = b
 
 
     def setTWaveCharacteristics(self, theta:float, a:float, b:float) -> None:
-        self.t_wave_theta   = theta
-        self.t_wave_a       = a
-        self.t_wave_b       = b
+        self.wave[self.T]['theta']  = theta
+        self.wave[self.T]['a']      = a
+        self.wave[self.T]['b']      = b
 
 
     def enableRespiratoryFactor(self, amp:float, rate:float=0.23):

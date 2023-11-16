@@ -77,7 +77,7 @@ def cdc_ecg_task(task_lock, ecg_lock):
         cm_ecg_lead1.enableRSAFactor(0.1)
         cm_ecg_lead1.enableMayerFactor()
     else:
-        cm_ecg_lead1.setBaseAmplitude(0.3)
+        cm_ecg_lead1.setBaseAmplitude(0.4)
         cm_ecg_lead1.setBaseFrequency(70 + random_val*30)
 
     cm_ecg_lead2 = cdc_ecg.CardimetryECGWaveCharacteristics()
@@ -87,11 +87,11 @@ def cdc_ecg_task(task_lock, ecg_lock):
         cm_ecg_lead2.enableRespiratoryFactor(0.005 + random_val*0.01, 0.24)
         cm_ecg_lead2.enableRSAFactor(0.1)
         cm_ecg_lead2.enableMayerFactor()
-        cm_ecg_lead2.setRWaveCharacteristics(0.0, 500, 0.1)
+        cm_ecg_lead2.setRWaveCharacteristics(0.0, 400, 0.1)
     else:
         cm_ecg_lead2.setBaseAmplitude(0.13)
         cm_ecg_lead2.setBaseFrequency(70 + random_val*30)
-        cm_ecg_lead2.setRWaveCharacteristics(0.0, 500, 0.1)
+        cm_ecg_lead2.setRWaveCharacteristics(0.0, 400, 0.1)
 
     # Create an ECG generator
     cm_ecg_generator_lead1 = cdc_ecg.CardimetryECGGenerator(cm_ecg_lead1)
@@ -112,7 +112,7 @@ def cdc_ecg_task(task_lock, ecg_lock):
 
             ts      = time.time()*1000
             lead1   = cm_ecg_generator_lead1.getCurrentAmpADS1293Format()
-            lead2   = cm_ecg_generator_lead1.getCurrentAmpADS1293Format()
+            lead2   = cm_ecg_generator_lead2.getCurrentAmpADS1293Format()
             lead3   = lead1 - lead2
 
             if queue_select == 1:
@@ -269,11 +269,11 @@ def cdc_mqtt_task(task_lock, ecg_lock, imu_lock):
     # Local variable
     CLIENT_NAME     = str(sys.argv[1])
     PATIENT_NAME    = str(sys.argv[2])
-    SERVER_ADDRESS  = "192.168.0.214"
+    SERVER_ADDRESS  = "192.168.79.102"
     MQTT_PORT       = 1883
-    TIME_TOPIC      = f"/time/{CLIENT_NAME}/{PATIENT_NAME}"
-    ECG_TOPIC       = f"/ecg/{CLIENT_NAME}/{PATIENT_NAME}"
-    IMU_TOPIC       = f"/imu/{CLIENT_NAME}/{PATIENT_NAME}"
+    TIME_TOPIC      = f"/time_dum/{CLIENT_NAME}/{PATIENT_NAME}"
+    ECG_TOPIC       = f"/ecg_dum/{CLIENT_NAME}/{PATIENT_NAME}"
+    IMU_TOPIC       = f"/imu_dum/{CLIENT_NAME}/{PATIENT_NAME}"
     ecg_permit      = 0
     imu_permit      = 0
     ecg_cmml        = ""
