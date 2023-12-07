@@ -267,21 +267,22 @@ def cdc_mqtt_task(task_lock, ecg_lock, imu_lock):
     global imu_permit_to_send
     
     # Local variable
-    CLIENT_NAME     = str(sys.argv[1])
-    PATIENT_NAME    = str(sys.argv[2])
-    SERVER_ADDRESS  = "192.168.79.102"
+    CLIENT_NAME     = "cm99"
+    PATIENT_ID    = "99"
+    SERVER_ADDRESS  = "127.0.0.1"
     MQTT_PORT       = 1883
-    TIME_TOPIC      = f"/time_dum/{CLIENT_NAME}/{PATIENT_NAME}"
-    ECG_TOPIC       = f"/ecg_dum/{CLIENT_NAME}/{PATIENT_NAME}"
-    IMU_TOPIC       = f"/imu_dum/{CLIENT_NAME}/{PATIENT_NAME}"
+    HTTP_PORT       = 8000
+    TIME_TOPIC      = f"/time_dum/{CLIENT_NAME}/{PATIENT_ID}"
+    ECG_TOPIC       = f"/ecg_dum/{CLIENT_NAME}/{PATIENT_ID}"
+    IMU_TOPIC       = f"/imu_dum/{CLIENT_NAME}/{PATIENT_ID}"
     ecg_permit      = 0
     imu_permit      = 0
     ecg_cmml        = ""
     imu_cmml        = ""
 
     # Request to register
-    # response = requests.post(f"https://{SERVER_ADDRESS}/api/v1/device/{CLIENT_NAME}")
-    # response = requests.post(f"https://{SERVER_ADDRESS}/api/v1/device/{CLIENT_NAME}/{PATIENT_NAME}")
+    response = requests.post(f"http://{SERVER_ADDRESS}:{HTTP_PORT}/api/v1/device/{CLIENT_NAME}")
+    response = requests.post(f"http://{SERVER_ADDRESS}:{HTTP_PORT}/api/v1/device/{CLIENT_NAME}/{PATIENT_ID}")
 
     # Start MQTT
     client = mqtt.Client(CLIENT_NAME)
